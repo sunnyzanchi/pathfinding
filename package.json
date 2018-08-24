@@ -1,0 +1,23 @@
+{
+  "name": "pathfinding",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "ava": {
+    "babel": "inherit",
+    "require": [
+      "babel-register"
+    ]
+  },
+  "keywords": [],
+  "author": "Zanchi <emzanchi@gmail.com> (https://github.com/zanchi)",
+  "license": "ISC",
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0"
+  }
+}
