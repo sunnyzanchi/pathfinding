@@ -1,15 +1,15 @@
-import { test } from 'ava';
-import { getDistance, getFarthest, getFarthestPair, samePoint, getClosest, complement } from './utils';
+import { test } from 'ava'
+import { getDistance, getFarthest, getFarthestPair, samePoint, getClosest, complement } from './utils'
 
-const a = { x: 0, y: 0 };
-const b = { x: 5, y: 0 };
-const c = { x: 0, y: 5 };
-const d = { x: 3, y: 4 };
-const e = { x: 30, y: 40 };
-const f = { x: -10, y: -10 };
-const g = { x: 1, y: 0 };
+const a = { x: 0, y: 0 }
+const b = { x: 5, y: 0 }
+const c = { x: 0, y: 5 }
+const d = { x: 3, y: 4 }
+const e = { x: 30, y: 40 }
+const f = { x: -10, y: -10 }
+const g = { x: 1, y: 0 }
 
-test('complement', t=> {
+test('complement', t => {
   const set1 = [a, b, c, d]
   const set2 = [b]
   const set3 = [b, c]
@@ -23,25 +23,25 @@ test('complement', t=> {
 })
 
 test('getClosest', t => {
-  t.is(getClosest(a, [b, c, d, e, f, g]), g);
-});
+  t.is(getClosest(a, [b, c, d, e, f, g]), g)
+})
 
 test('getDistance', t => {
-  t.is(getDistance(a, b), 5);
-  t.is(getDistance(a, c), 5);
-  t.is(getDistance(a, d), 5);
-});
+  t.is(getDistance(a, b), 5)
+  t.is(getDistance(a, c), 5)
+  t.is(getDistance(a, d), 5)
+})
 
 test('getFarthest', t => {
-  t.is(getFarthest(a, [b, c, d, e]), e);
-});
+  t.is(getFarthest(a, [b, c, d, e]), e)
+})
 
 test('getFarthestPair', t => {
-  t.deepEqual([e, f], getFarthestPair([a, b, c, d, e, f]));
-});
+  t.deepEqual([e, f], getFarthestPair([a, b, c, d, e, f]))
+})
 
 test('samePoint', t => {
-  const sameAsA = { x: 0, y: 0 };
-  t.true(samePoint(a)(sameAsA));
-  t.false(samePoint(a)(f));
-});
+  const sameAsA = { x: 0, y: 0 }
+  t.true(samePoint(a)(sameAsA))
+  t.false(samePoint(a)(f))
+})
