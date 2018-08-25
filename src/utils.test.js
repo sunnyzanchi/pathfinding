@@ -23,7 +23,7 @@ test('getFarthestPair', t => {
 });
 
 test('samePoint', t => {
-  t.true(samePoint([0, 0])([0, 0]));
-  t.true(samePoint([10, -10])([10, -10]));
-  t.false(samePoint([0, 0])([10, 10]));
+  const sameAsA = { x: 0, y: 0 };
+  t.true(samePoint(a)(sameAsA));
+  t.false(samePoint(a)(f));
 });
