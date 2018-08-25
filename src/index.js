@@ -1,4 +1,4 @@
-import { getFarthestPair, samePoint } from './utils';
+import { getFarthestPair, samePoint, findShortestPath } from './utils';
 
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
@@ -6,14 +6,21 @@ const points = [];
 
 window.addEventListener('contextmenu', e => e.preventDefault());
 
-window.addEventListener('click', e => {
+canvas.addEventListener('click', e => {
   points.push({ x: e.x, y: e.y });
-  points.length > 1 && render(points);
+  render(points);
 });
 
 const makeRender = ctx => points => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const farthest = getFarthestPair(points);
+  const farthest = points.length > 1 ? getFarthestPair(points) : [];
+  const path = points.length > 1 ? findShortestPath(farthest[0], farthest[1], points) : [];
+  const drawPath = farthest.length > 1 ? [farthest[0], ...path, farthest[1]] : [];
+
+  drawPath.length > 1 && ctx.moveTo(drawPath[0].x, drawPath[0].y);
+  ctx.strokeStyle = 'gray';
+  drawPath.forEach(point => ctx.lineTo(point.x, point.y));
+  ctx.stroke();
 
   points.forEach(point => {
     // TODO: Make this work
