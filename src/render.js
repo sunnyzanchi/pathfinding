@@ -1,33 +1,53 @@
-import { within, getFarthestPair, findShortestPath, samePoint } from './utils'
+import { getFarthestPair, findShortestPath, partition, samePoint, within } from './utils'
 
-export const makeRender = ctx => (points, mouse) => {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-  const farthest = points.length > 1 ? getFarthestPair(points) : []
-  const path =
-    points.length > 1 ? findShortestPath(farthest[0], farthest[1], points) : []
-  const drawPath =
-    farthest.length > 1 ? [farthest[0], ...path, farthest[1]] : []
-
-  drawPath.length > 1 && ctx.moveTo(drawPath[0].x, drawPath[0].y)
+const drawLinks = (ctx, points) => {
   ctx.strokeStyle = 'gray'
-  drawPath.forEach(point => ctx.lineTo(point.x, point.y))
-  ctx.stroke()
+  ctx.setLineDash([])
 
   points.forEach(point => {
-    // TODO: Make this work
-    if (farthest.some(samePoint(point))) {
-      ctx.strokeStyle = 'red'
-      ctx.lineWidth = 1
-    } else if (within(10, mouse, point)) {
-      ctx.strokeStyle = 'blue'
-      ctx.lineWidth = 2
-    } else {
-      ctx.strokeStyle = 'black'
-      ctx.lineWidth = 1
-    }
+    if (!point.links.length) return
 
+    ctx.beginPath()
+    ctx.moveTo(point.x, point.y)
+    point.links.forEach(link => ctx.lineTo(link.x, link.y))
+    ctx.stroke()
+  })
+}
+
+const drawPoints = (ctx, mouse, points) => {
+  const byMouse = within(10, mouse)
+
+  const [mousePoints, notByMouse] = partition(byMouse)(points)
+
+  ctx.setLineDash([])
+  ctx.strokeStyle = 'blue'
+  mousePoints.forEach(point => {
     ctx.beginPath()
     ctx.ellipse(point.x, point.y, 4, 4, 0, 0, Math.PI * 2)
     ctx.stroke()
   })
+
+  ctx.strokeStyle = 'black'
+  notByMouse.forEach(point => {
+    ctx.beginPath()
+    ctx.ellipse(point.x, point.y, 4, 4, 0, 0, Math.PI * 2)
+    ctx.stroke()
+  })
+}
+
+const drawToMouse = (ctx, drawing, lastPoint, mouse) => {
+  if (!drawing) return
+
+  ctx.setLineDash([5, 2])
+  ctx.strokeStyle = 'gray'
+  ctx.moveTo(lastPoint.x, lastPoint.y)
+  ctx.lineTo(mouse.x, mouse.y)
+  ctx.stroke()
+}
+
+export const makeRender = ctx => ({ drawing, points, mouse }) => {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  drawPoints(ctx, mouse, points)
+  drawLinks(ctx, points)
+  drawToMouse(ctx, drawing, points[points.length - 1], mouse)
 }

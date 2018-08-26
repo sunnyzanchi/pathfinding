@@ -40,7 +40,17 @@ export const getFarthestPair = points =>
     [points[0], points[1]]
   )
 
+// https://stackoverflow.com/a/47225591
+export const partition = predicate => list =>
+  list.reduce(
+    ([pass, fail], elem) =>
+      predicate(elem)
+        ? [[...pass, elem], fail]
+        : [pass, [...fail, elem]],
+    [[], []]
+  )
+
 export const samePoint = p1 => p2 => p1.x === p2.x && p1.y === p2.y
 
-export const within = (dist, p1, p2) =>
+export const within = (dist, p1) => p2 =>
   getDistance(p1, p2) < dist
