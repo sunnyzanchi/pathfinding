@@ -41,3 +41,6 @@ export const getFarthestPair = points =>
   )
 
 export const samePoint = p1 => p2 => p1.x === p2.x && p1.y === p2.y
+
+export const within = (dist, p1, p2) =>
+  getDistance(p1, p2) < dist
