@@ -1,5 +1,13 @@
 import { test } from 'ava'
-import { getDistance, getFarthest, getFarthestPair, samePoint, getClosest, complement } from './utils'
+import {
+  getDistance,
+  getFarthest,
+  getFarthestPair,
+  samePoint,
+  getClosest,
+  complement,
+  findShortestPath
+} from './utils'
 
 const a = { x: 0, y: 0 }
 const b = { x: 5, y: 0 }
@@ -20,6 +28,18 @@ test('complement', t => {
   t.deepEqual(complement(set1)(set3), [a, d])
   t.deepEqual(complement(set1)(set4), [a])
   t.deepEqual(complement(set1)(set5), [])
+})
+
+test('findShortestPath', t => {
+  const a = { x: 0, y: 0 }
+  const b = { x: 1, y: 0 }
+  const c = { x: 2, y: 0 }
+  const d = { x: 3, y: 5 }
+  const e = { x: 4, y: 0 }
+  const f = { x: 5, y: 0 }
+
+  const result = findShortestPath(a, f, [a, b, c, d, e, f])
+  t.deepEqual(result, [b, c, e])
 })
 
 test('getClosest', t => {
