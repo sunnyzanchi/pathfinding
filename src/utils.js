@@ -1,7 +1,6 @@
 // Get points that are _only_ in set A
 // https://en.wikipedia.org/wiki/Complement_(set_theory)
-export const complement = a => b =>
-  a.filter(p => !b.some(samePoint(p)))
+export const complement = a => b => a.filter(p => !b.some(samePoint(p)))
 
 // Naive implementation
 export const findShortestPath = (p1, p2, points, path = []) => {
@@ -10,6 +9,18 @@ export const findShortestPath = (p1, p2, points, path = []) => {
   return samePoint(closest)(p2)
     ? path
     : findShortestPath(closest, p2, points, [...path, closest])
+}
+
+/**
+ * Create an object from a shape of [[key, value], ...]
+ * @param {Array} pairs Array of key value pairs to make an object from
+ * @return {Object}
+ */
+export const fromPairs = pairs => {
+  // Not functional. But faster than a reduce and it doesn't make a bunch of intermediate objects
+  const obj = {}
+  pairs.forEach(([key, val]) => (obj[key] = val))
+  return obj
 }
 
 export const getClosest = (point, points) => {
@@ -40,17 +51,22 @@ export const getFarthestPair = points =>
     [points[0], points[1]]
   )
 
+export const last = list => list[list.length - 1]
+
+export const makePoint = (x, y) => ({
+  children: [],
+  x,
+  y
+})
+
 // https://stackoverflow.com/a/47225591
 export const partition = predicate => list =>
   list.reduce(
     ([pass, fail], elem) =>
-      predicate(elem)
-        ? [[...pass, elem], fail]
-        : [pass, [...fail, elem]],
+      predicate(elem) ? [[...pass, elem], fail] : [pass, [...fail, elem]],
     [[], []]
   )
 
 export const samePoint = p1 => p2 => p1.x === p2.x && p1.y === p2.y
 
-export const within = (dist, p1) => p2 =>
-  getDistance(p1, p2) < dist
+export const within = (dist, p1) => p2 => getDistance(p1, p2) < dist

@@ -1,15 +1,15 @@
-import { getFarthestPair, findShortestPath, partition, samePoint, within } from './utils'
+import { last, partition, within } from './utils'
 
-const drawLinks = (ctx, points) => {
+const drawChildren = (ctx, points) => {
   ctx.strokeStyle = 'gray'
   ctx.setLineDash([])
 
   points.forEach(point => {
-    if (!point.links.length) return
+    if (point.children.length === 0) return
 
     ctx.beginPath()
     ctx.moveTo(point.x, point.y)
-    point.links.forEach(link => ctx.lineTo(link.x, link.y))
+    point.children.forEach(child => ctx.lineTo(child.x, child.y))
     ctx.stroke()
   })
 }
@@ -48,6 +48,6 @@ const drawToMouse = (ctx, drawing, lastPoint, mouse) => {
 export const makeRender = ctx => ({ drawing, points, mouse }) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   drawPoints(ctx, mouse, points)
-  drawLinks(ctx, points)
-  drawToMouse(ctx, drawing, points[points.length - 1], mouse)
+  drawChildren(ctx, points)
+  drawToMouse(ctx, drawing, last(points), mouse)
 }

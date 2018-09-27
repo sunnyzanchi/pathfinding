@@ -1,6 +1,4 @@
 {
-  "plugins": [
-    "syntax-object-rest-spread"
-  ],
+  "plugins": ["syntax-object-rest-spread"],
   "presets": ["env"]
 }
