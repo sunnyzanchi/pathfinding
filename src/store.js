@@ -2,6 +2,7 @@ import { createStore } from 'redux'
 import { last } from './utils'
 
 const initialState = {
+  currentPoint: null,
   drawing: false,
   mouse: { x: Infinity, y: Infinity },
   points: []
@@ -10,40 +11,47 @@ const initialState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case types.ADD_CHILD: {
-      const lastPoint = last(state.points)
+      const { currentPoint } = state
       const newPoint = action.payload
       const updated = {
-        ...lastPoint,
-        children: lastPoint.children.concat(newPoint)
+        ...currentPoint,
+        children: currentPoint.children.concat(newPoint)
       }
-      const rest = state.points.slice(0, -1)
-      const points = [...rest, updated]
-      return { ...state, points }
+      const points = state.points
+        .map(p => (p === currentPoint ? updated : p))
+        .concat(newPoint)
+      return { ...state, currentPoint: newPoint, points }
     }
     case types.ADD_POINT: {
-      const lastPoint = last(state.points)
+      const { currentPoint } = state
       const newPoint = action.payload
 
-      // The very first point we add
-      if (!lastPoint) {
-        return { ...state, points: [newPoint] }
+      if (!currentPoint) {
+        return {
+          ...state,
+          currentPoint: newPoint,
+          points: state.points.concat(newPoint)
+        }
       }
 
       const updated = {
-        ...lastPoint,
-        children: lastPoint.children.concat(newPoint)
+        ...currentPoint,
+        children: currentPoint.children.concat(newPoint)
       }
-      const rest = state.points.slice(0, -1)
-      const points = [...rest, updated, newPoint]
+      const points = state.points
+        .map(p => (p === currentPoint ? updated : p))
+        .concat(newPoint)
 
-      return { ...state, points }
+      return { ...state, currentPoint: newPoint, points }
     }
+    case types.SET_CURRENT_POINT:
+      return { ...state, currentPoint: action.payload }
     case types.SET_MOUSE:
       return { ...state, mouse: action.payload }
     case types.START_DRAWING:
       return { ...state, drawing: true }
     case types.STOP_DRAWING:
-      return { ...state, drawing: false }
+      return { ...state, currentPoint: null, drawing: false }
     default:
       return state
   }
@@ -52,6 +60,7 @@ const reducer = (state, action) => {
 export const types = {
   ADD_CHILD: 'ADD_CHILD',
   ADD_POINT: 'ADD_POINT',
+  SET_CURRENT_POINT: 'SET_CURRENT_POINT',
   SET_MOUSE: 'SET_MOUSE',
   START_DRAWING: 'START_DRAWING',
   STOP_DRAWING: 'STOP_DRAWING'
