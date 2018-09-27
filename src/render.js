@@ -1,6 +1,6 @@
-import { last, partition, within } from './utils'
+import { partition, within } from './utils'
 
-const drawChildren = (ctx, points) => {
+const drawChildLines = (ctx, points) => {
   ctx.strokeStyle = 'gray'
   ctx.setLineDash([])
 
@@ -8,46 +8,52 @@ const drawChildren = (ctx, points) => {
     if (point.children.length === 0) return
 
     ctx.beginPath()
-    ctx.moveTo(point.x, point.y)
-    point.children.forEach(child => ctx.lineTo(child.x, child.y))
+    point.children.forEach(child => {
+      ctx.moveTo(point.x, point.y)
+      ctx.lineTo(child.x, child.y)
+    })
     ctx.stroke()
   })
 }
 
-const drawPoints = (ctx, mouse, points) => {
-  const byMouse = within(10, mouse)
+const drawPoint = ctx => point => {
+  ctx.beginPath()
+  ctx.ellipse(point.x, point.y, 4, 4, 0, 0, Math.PI * 2)
+  ctx.stroke()
+}
 
-  const [mousePoints, notByMouse] = partition(byMouse)(points)
+const drawPoints = (ctx, state) => {
+  const byMouse = within(10, state.mouse)
+  const isCurrent = point => point === state.currentPoint
+
+  const [mousePoints, notByMouse] = partition(byMouse)(state.points)
+  const [currentPoints, regularPoints] = partition(isCurrent)(notByMouse)
 
   ctx.setLineDash([])
   ctx.strokeStyle = 'blue'
-  mousePoints.forEach(point => {
-    ctx.beginPath()
-    ctx.ellipse(point.x, point.y, 4, 4, 0, 0, Math.PI * 2)
-    ctx.stroke()
-  })
+  mousePoints.forEach(drawPoint(ctx))
 
   ctx.strokeStyle = 'black'
-  notByMouse.forEach(point => {
-    ctx.beginPath()
-    ctx.ellipse(point.x, point.y, 4, 4, 0, 0, Math.PI * 2)
-    ctx.stroke()
-  })
+  regularPoints.forEach(drawPoint(ctx))
+
+  ctx.strokeStyle = 'red'
+  // Should only be one but could be none so we use forEach
+  currentPoints.forEach(drawPoint(ctx))
 }
 
-const drawToMouse = (ctx, drawing, lastPoint, mouse) => {
+const drawToMouse = (ctx, { currentPoint, drawing, mouse }) => {
   if (!drawing) return
 
   ctx.setLineDash([5, 2])
   ctx.strokeStyle = 'gray'
-  ctx.moveTo(lastPoint.x, lastPoint.y)
+  ctx.moveTo(currentPoint.x, currentPoint.y)
   ctx.lineTo(mouse.x, mouse.y)
   ctx.stroke()
 }
 
-export const makeRender = ctx => ({ drawing, points, mouse }) => {
+export const makeRender = ctx => state => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-  drawPoints(ctx, mouse, points)
-  drawChildren(ctx, points)
-  drawToMouse(ctx, drawing, last(points), mouse)
+  drawPoints(ctx, state)
+  drawChildLines(ctx, state.points)
+  drawToMouse(ctx, state)
 }

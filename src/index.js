@@ -59,7 +59,7 @@ canvas.addEventListener('click', e => {
     if (nearby) {
       // 3) We're clicking an existing point to set it to the current point
       // and entering draw mode
-      store.dispatch({ payload: point, type: types.SET_CURRENT_POINT })
+      store.dispatch({ payload: nearby, type: types.SET_CURRENT_POINT })
     } else {
       // 4) We're adding a completely new point and entering draw mode
       store.dispatch({ payload: point, type: types.ADD_POINT })

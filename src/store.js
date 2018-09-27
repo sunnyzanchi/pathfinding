@@ -1,5 +1,4 @@
 import { createStore } from 'redux'
-import { last } from './utils'
 
 const initialState = {
   currentPoint: null,
