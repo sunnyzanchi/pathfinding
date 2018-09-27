@@ -18,7 +18,9 @@ const reducer = (state, action) => {
       }
       const points = state.points
         .map(p => (p === currentPoint ? updated : p))
-        .concat(newPoint)
+        // If we're connecting to an existing point, we don't want
+        // to readd it to the list
+        .concat(state.points.some(p => p === newPoint) ? [] : newPoint)
       return { ...state, currentPoint: newPoint, points }
     }
     case types.ADD_POINT: {

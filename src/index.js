@@ -26,10 +26,9 @@ window.addEventListener('contextmenu', e => {
  * When we left click, four things can happen:
  *
  * In draw mode:
- * 1) We can add a new point, connected to the last drawn point.
+ * 1) We can click on an existing point to connect it to the current point.
+ * 2) We can add a new point, connected to the last drawn point.
  *   This sets the new point to the current point.
- * 2) We can click on an existing point to connect it to the current
- *   point.
  *
  * Outside of draw mode:
  * 3) We can click on a point that already exists to start drawing.
@@ -47,12 +46,12 @@ canvas.addEventListener('click', e => {
 
   if (drawing) {
     if (nearby) {
-      // 1) Add a new point, connecting it to the current point,
-      // then setting this new point to be the current point
-      store.dispatch({ payload: point, type: types.ADD_POINT })
-    } else {
-      // 2) Add the point we clicked on to the children of the
+      // 1) Add the point we clicked on to the children of the
       // current point, then set this point to be the current point
+      store.dispatch({ payload: nearby, type: types.ADD_CHILD })
+    } else {
+      // 2) Add a new point, connecting it to the current point,
+      // then setting this new point to be the current point
       store.dispatch({ payload: point, type: types.ADD_CHILD })
     }
   } else {
