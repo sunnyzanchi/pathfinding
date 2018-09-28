@@ -67,6 +67,6 @@ export const types = {
   STOP_DRAWING: 'STOP_DRAWING'
 }
 
-const store = createStore(reducer, initialState)
+const makeStore = state => createStore(reducer, state || initialState)
 
-export default store
+export default makeStore

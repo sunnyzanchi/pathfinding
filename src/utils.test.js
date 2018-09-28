@@ -1,12 +1,15 @@
 import { test } from 'ava'
 import {
+  complement,
+  findShortestPath,
+  getClosest,
   getDistance,
   getFarthest,
   getFarthestPair,
-  samePoint,
-  getClosest,
-  complement,
-  findShortestPath
+  getLinks,
+  isInLink,
+  makePoint,
+  samePoint
 } from './utils'
 
 const a = { x: 0, y: 0 }
@@ -31,15 +34,15 @@ test('complement', t => {
 })
 
 test('findShortestPath', t => {
-  const a = { x: 0, y: 0 }
-  const b = { x: 1, y: 0 }
-  const c = { x: 2, y: 0 }
-  const d = { x: 3, y: 5 }
-  const e = { x: 4, y: 0 }
-  const f = { x: 5, y: 0 }
+  // The shortest path from d -> a is d -> b -> a
+  // c is way too far out to be shorter
+  const a = makePoint(50, 0)
+  const b = makePoint(25, 25, [a])
+  const c = makePoint(200, 25, [a])
+  const d = makePoint(50, 50, [b, c])
 
-  const result = findShortestPath(a, f, [a, b, c, d, e, f])
-  t.deepEqual(result, [b, c, e])
+  const result = findShortestPath(a, d, [a, b, c, d])
+  t.deepEqual(result, [d, b, a])
 })
 
 test('getClosest', t => {
@@ -47,9 +50,9 @@ test('getClosest', t => {
 })
 
 test('getDistance', t => {
-  t.is(getDistance(a, b), 5)
-  t.is(getDistance(a, c), 5)
-  t.is(getDistance(a, d), 5)
+  t.is(getDistance(a)(b), 5)
+  t.is(getDistance(a)(c), 5)
+  t.is(getDistance(a)(d), 5)
 })
 
 test('getFarthest', t => {
@@ -58,6 +61,35 @@ test('getFarthest', t => {
 
 test('getFarthestPair', t => {
   t.deepEqual([e, f], getFarthestPair([a, b, c, d, e, f]))
+})
+
+test('getLinks', t => {
+  const a = makePoint(0, 1)
+  const b = makePoint(0, 2, [a])
+  const c = makePoint(0, 3, [b])
+  const d = makePoint(0, 4, [a, b])
+  const e = makePoint(0, 5, [a, d])
+
+  const links = getLinks([a, b, c, d, e])
+  t.deepEqual(links, [
+    [b, a],
+    [c, b],
+    [d, a],
+    [d, b],
+    [e, a],
+    [e, d]
+  ])
+})
+
+test('isInLink', t => {
+  const a = makePoint(0, 1)
+  const b = makePoint(0, 2, [a])
+  const c = makePoint(0, 3, [b])
+
+  const links = getLinks([a, b, c])
+
+  t.true(isInLink(a)(links[0]))
+  t.false(isInLink(a)(links[1]))
 })
 
 test('samePoint', t => {

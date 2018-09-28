@@ -4,12 +4,17 @@ export const complement = a => b => a.filter(p => !b.some(samePoint(p)))
 
 // Naive implementation
 export const findShortestPath = (p1, p2, points, path = []) => {
-  const pointsWithoutPath = complement(points)(path)
-  const closest = getClosest(p1, pointsWithoutPath)
-  return samePoint(closest)(p2)
-    ? path
-    : findShortestPath(closest, p2, points, [...path, closest])
+  const links = getLinks(points)
+  const linksToP1 = links.filter(isInLink(p1))
+  const connectedToP1 = flatten(linksToP1).filter(p => p !== p1)
+  const distances = connectedToP1.map(getDistance(p1))
 }
+
+export const flatten = list =>
+  list.reduce(
+    (acc, item) => (Array.isArray(item) ? [...acc, ...item] : [...acc, item]),
+    []
+  )
 
 /**
  * Create an object from a shape of [[key, value], ...]
@@ -26,17 +31,17 @@ export const fromPairs = pairs => {
 export const getClosest = (point, points) => {
   const withoutPoint = points.filter(p => p !== point)
   return withoutPoint.reduce(
-    (cur, n) => (getDistance(n, point) < getDistance(cur, point) ? n : cur),
+    (cur, n) => (getDistance(n)(point) < getDistance(cur)(point) ? n : cur),
     withoutPoint[0]
   )
 }
 
-export const getDistance = ({ x: x1, y: y1 }, { x: x2, y: y2 }) =>
+export const getDistance = ({ x: x1, y: y1 }) => ({ x: x2, y: y2 }) =>
   Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 export const getFarthest = (point, points) =>
   points.reduce(
-    (cur, n) => (getDistance(n, point) > getDistance(cur, point) ? n : cur),
+    (cur, n) => (getDistance(n)(point) > getDistance(cur)(point) ? n : cur),
     point
   )
 
@@ -44,17 +49,30 @@ export const getFarthestPair = points =>
   points.reduce(
     (cur, n) => {
       const farthestFromN = getFarthest(n, points)
-      return getDistance(n, farthestFromN) > getDistance(cur[0], cur[1])
+      return getDistance(n)(farthestFromN) > getDistance(cur[0])(cur[1])
         ? [n, farthestFromN]
         : cur
     },
     [points[0], points[1]]
   )
 
+// Return a flat list of all links between points
+// This currently works under the assumption that points can't be mutual children
+// ie, if a is a child of b, b can't be a child of a
+export const getLinks = points =>
+  points.reduce(
+    (acc, point) => [...acc, ...point.children.map(child => [point, child])],
+    []
+  )
+
+// Returns whether a point is one of the points in a particular link
+export const isInLink = point => ([l1, l2]) =>
+  samePoint(point)(l1) || samePoint(point)(l2)
+
 export const last = list => list[list.length - 1]
 
-export const makePoint = (x, y) => ({
-  children: [],
+export const makePoint = (x, y, children = []) => ({
+  children,
   x,
   y
 })
@@ -69,4 +87,4 @@ export const partition = predicate => list =>
 
 export const samePoint = p1 => p2 => p1.x === p2.x && p1.y === p2.y
 
-export const within = (dist, p1) => p2 => getDistance(p1, p2) < dist
+export const within = (dist, p1) => p2 => getDistance(p1)(p2) < dist

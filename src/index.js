@@ -1,10 +1,11 @@
 import { makeRender } from './render'
-import store, { types } from './store'
+import makeStore, { types } from './store'
 import { makePoint, within } from './utils'
 
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 const render = makeRender(ctx)
+const store = makeStore()
 
 store.subscribe(() => {
   const state = store.getState()
@@ -15,10 +16,7 @@ store.subscribe(() => {
 
 // So we can use right-click
 window.addEventListener('contextmenu', e => {
-  if (store.getState().drawing) {
-    store.dispatch({ type: types.STOP_DRAWING })
-  }
-
+  store.dispatch({ type: types.STOP_DRAWING })
   e.preventDefault()
 })
 
