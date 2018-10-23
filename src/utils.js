@@ -8,6 +8,7 @@ export const findShortestPath = (p1, p2, points, path = []) => {
   const linksToP1 = links.filter(isInLink(p1))
   const connectedToP1 = flatten(linksToP1).filter(p => p !== p1)
   const distances = connectedToP1.map(getDistance(p1))
+  console.log(distances)
 }
 
 export const flatten = list =>

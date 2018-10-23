@@ -7,6 +7,11 @@ const ctx = canvas.getContext('2d')
 const render = makeRender(ctx)
 const store = makeStore()
 
+const fit = () => {
+  canvas.height = window.innerHeight
+  canvas.width = window.innerWidth
+}
+
 store.subscribe(() => {
   const state = store.getState()
   if (state.points.length > 0) {
@@ -74,3 +79,6 @@ canvas.addEventListener('mousemove', e => {
 
   store.dispatch({ payload: mouse, type: types.SET_MOUSE })
 })
+
+window.addEventListener('resize', fit)
+fit()
