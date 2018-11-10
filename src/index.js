@@ -2,14 +2,20 @@ import { makeRender } from './render'
 import makeStore, { types } from './store'
 import { makePoint, within } from './utils'
 
+const aside = document.querySelector('aside')
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 const render = makeRender(ctx)
 const store = makeStore()
 
+// We need to account for the aside on the left
+const offsetLeft = canvas.offsetLeft
+const offsetTop = canvas.offsetTop
+
 const fit = () => {
+  const { width } = aside.getBoundingClientRect()
   canvas.height = window.innerHeight
-  canvas.width = window.innerWidth
+  canvas.width = window.innerWidth - width
 }
 
 store.subscribe(() => {
@@ -44,7 +50,7 @@ window.addEventListener('contextmenu', e => {
  */
 canvas.addEventListener('click', e => {
   const { drawing, points } = store.getState()
-  const point = makePoint(e.x, e.y)
+  const point = makePoint(e.x, e.y, undefined, offsetLeft)
   const nearby = points.find(within(10, point))
 
   if (drawing) {
@@ -72,9 +78,10 @@ canvas.addEventListener('click', e => {
 })
 
 canvas.addEventListener('mousemove', e => {
+  console.log(offsetTop)
   const mouse = {
-    x: e.x,
-    y: e.y
+    x: e.x - offsetLeft,
+    y: e.y - offsetTop
   }
 
   store.dispatch({ payload: mouse, type: types.SET_MOUSE })

@@ -1,4 +1,27 @@
+aside {
+  background: #fafafa;
+  /* border-right: 1px solid #eee; */
+  box-shadow: 3px 0 6px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+  padding: 25px;
+  width: 350px;
+}
+
 body {
+  display: flex;
+  font-family: sans-serif;
   margin: 0;
   overflow: hidden;
+}
+
+dt {
+  font-weight: bolder;
+}
+
+dd {
+  margin-left: 12px;
+}
+
+dd:not(:last-of-type) {
+  margin-bottom: 18px;
 }

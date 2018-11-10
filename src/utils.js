@@ -72,9 +72,9 @@ export const isInLink = point => ([l1, l2]) =>
 
 export const last = list => list[list.length - 1]
 
-export const makePoint = (x, y, children = []) => ({
+export const makePoint = (x, y, children = [], offsetLeft) => ({
   children,
-  x,
+  x: x - offsetLeft,
   y
 })
 
