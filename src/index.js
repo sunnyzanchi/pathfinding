@@ -10,7 +10,6 @@ const store = makeStore()
 
 // We need to account for the aside on the left
 const offsetLeft = canvas.offsetLeft
-const offsetTop = canvas.offsetTop
 
 const fit = () => {
   const { width } = aside.getBoundingClientRect()
@@ -78,10 +77,9 @@ canvas.addEventListener('click', e => {
 })
 
 canvas.addEventListener('mousemove', e => {
-  console.log(offsetTop)
   const mouse = {
     x: e.x - offsetLeft,
-    y: e.y - offsetTop
+    y: e.y
   }
 
   store.dispatch({ payload: mouse, type: types.SET_MOUSE })
