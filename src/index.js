@@ -52,6 +52,11 @@ canvas.addEventListener('click', e => {
   const point = makePoint(e.x, e.y, undefined, offsetLeft)
   const nearby = points.find(within(10, point))
 
+  if (e.ctrlKey && nearby) {
+    store.dispatch({ payload: nearby, type: types.SET_PATHFIND_POINT })
+    return
+  }
+
   if (drawing) {
     if (nearby) {
       // 1) Add the point we clicked on to the children of the

@@ -3,8 +3,10 @@ import { createStore } from 'redux'
 const initialState = {
   currentPoint: null,
   drawing: false,
+  endPoint: undefined,
   mouse: { x: Infinity, y: Infinity },
-  points: []
+  points: [],
+  startPoint: undefined
 }
 
 const reducer = (state, action) => {
@@ -49,6 +51,17 @@ const reducer = (state, action) => {
       return { ...state, currentPoint: action.payload }
     case types.SET_MOUSE:
       return { ...state, mouse: action.payload }
+    case types.SET_PATHFIND_POINT:
+      if (!state.startPoint || (state.startPoint && state.endPoint)) {
+        // Set the start point if there isn't already one, or if we're starting a new pair
+        return { ...state, endPoint: undefined, startPoint: action.payload }
+      } else if (state.startPoint === action.payload) {
+        // If the point is the same as the already selected start point, do nothing
+        return state
+      } else {
+        // Set the end point
+        return { ...state, endPoint: action.payload }
+      }
     case types.START_DRAWING:
       return { ...state, drawing: true }
     case types.STOP_DRAWING:
@@ -63,6 +76,7 @@ export const types = {
   ADD_POINT: 'ADD_POINT',
   SET_CURRENT_POINT: 'SET_CURRENT_POINT',
   SET_MOUSE: 'SET_MOUSE',
+  SET_PATHFIND_POINT: 'SET_PATHFIND_POINT',
   START_DRAWING: 'START_DRAWING',
   STOP_DRAWING: 'STOP_DRAWING'
 }

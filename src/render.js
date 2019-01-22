@@ -1,6 +1,10 @@
-import { partition, within } from './utils'
+import { partition, within, samePoint, findShortestPath } from './utils'
+
+const isPathFindingPoint = ({ startPoint = {}, endPoint = {} }) => point =>
+  samePoint(startPoint)(point) || samePoint(endPoint)(point)
 
 const drawChildLines = (ctx, points) => {
+  ctx.lineWidth = 1
   ctx.strokeStyle = 'gray'
   ctx.setLineDash([])
 
@@ -28,23 +32,41 @@ const drawPoints = (ctx, state) => {
 
   const [mousePoints, notByMouse] = partition(byMouse)(state.points)
   const [currentPoints, regularPoints] = partition(isCurrent)(notByMouse)
+  const [pathfindingPoints, rest] = partition(isPathFindingPoint(state))(
+    regularPoints
+  )
+
+  if (pathfindingPoints.length === 2) {
+    const path = findShortestPath(
+      pathfindingPoints[0],
+      pathfindingPoints[1],
+      state.points
+    )
+    console.log(path)
+  }
 
   ctx.setLineDash([])
+  ctx.lineWidth = 1
   ctx.strokeStyle = 'blue'
   mousePoints.forEach(drawPoint(ctx))
 
   ctx.strokeStyle = 'black'
-  regularPoints.forEach(drawPoint(ctx))
+  rest.forEach(drawPoint(ctx))
 
   ctx.strokeStyle = 'red'
   // Should only be one but could be none so we use forEach
   currentPoints.forEach(drawPoint(ctx))
+
+  ctx.lineWidth = 3
+  ctx.strokeStyle = 'green'
+  pathfindingPoints.forEach(drawPoint(ctx))
 }
 
 const drawToMouse = (ctx, { currentPoint, drawing, mouse }) => {
   if (!drawing) return
 
   ctx.setLineDash([5, 2])
+  ctx.lineWidth = 1
   ctx.strokeStyle = 'gray'
   ctx.moveTo(currentPoint.x, currentPoint.y)
   ctx.lineTo(mouse.x, mouse.y)
