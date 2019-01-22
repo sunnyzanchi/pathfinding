@@ -17,18 +17,6 @@ export const flatten = list =>
     []
   )
 
-/**
- * Create an object from a shape of [[key, value], ...]
- * @param {Array} pairs Array of key value pairs to make an object from
- * @return {Object}
- */
-export const fromPairs = pairs => {
-  // Not functional. But faster than a reduce and it doesn't make a bunch of intermediate objects
-  const obj = {}
-  pairs.forEach(([key, val]) => (obj[key] = val))
-  return obj
-}
-
 export const getClosest = (point, points) => {
   const withoutPoint = points.filter(p => p !== point)
   return withoutPoint.reduce(
