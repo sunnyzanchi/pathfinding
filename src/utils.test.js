@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import test from 'ava'
 import {
   complement,
   findShortestPath,
@@ -71,14 +71,7 @@ test('getLinks', t => {
   const e = makePoint(0, 5, [a, d])
 
   const links = getLinks([a, b, c, d, e])
-  t.deepEqual(links, [
-    [b, a],
-    [c, b],
-    [d, a],
-    [d, b],
-    [e, a],
-    [e, d]
-  ])
+  t.deepEqual(links, [[b, a], [c, b], [d, a], [d, b], [e, a], [e, d]])
 })
 
 test('isInLink', t => {

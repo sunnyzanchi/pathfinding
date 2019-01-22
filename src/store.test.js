@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import test from 'ava'
 import makeStore, { types } from './store'
 import { makePoint } from './utils'
 
