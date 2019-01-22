@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint src",
-    "start": "parcel -p 3000 ./src/index.html",
+    "start": "parcel --open -p 3000 ./src/index.html",
     "test": "ava"
   },
   "ava": {
